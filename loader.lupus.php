@@ -128,11 +128,14 @@ abstract class LupusEnvironmentLoaderBase {
    * Gets the content of dotenv files for the given filename.
    *
    * Dotenv files are found by optionally including files with "--SUFFIXES"
-   * first, e.g. for "app--server--prod" the files
+   * or ".SUFFIXES" first, e.g. for "app--server--hoster.prod" the files
    *  - app.env
    *  - app--server.env
-   *  - app--server--prod.env
-   * are loaded in exactly that order.
+   *  - app--server--hoster.env
+   *  - app--server--hoster.prod.env
+   * are loadeded in exactly that order. Usually "--" are used as separators,
+   * but points are supported for nicely grouping environment or server
+   * names, e.g. by using environment names like "hoster.prod".
    *
    * @param $filename
    *   The filename to parse, without the ".env" suffix.
@@ -141,6 +144,8 @@ abstract class LupusEnvironmentLoaderBase {
    *   An array of file content, keyed by filename.
    */
   protected static function getDotenvFiles($filename) {
+    // Also support points as separators.
+    $filename = str_replace('.', '--', $filename);
     $parts = explode('--', $filename);
     $files = [];
     $pattern = __DIR__ . '/';
